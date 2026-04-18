@@ -4,9 +4,9 @@
 
 // UNIX/Linux system headers for socket programming
 #include <netinet/in.h> // system socket API; For sockaddr_in
-#include <unistd.h> // for close() system call
-#include <sys/socket.h>
-#include <arpa/inet.h>
+#include <unistd.h>     // for close() system call
+#include <sys/socket.h> // for socket functions (socket(), bind(), sendto(), recvfrom())
+#include <arpa/inet.h>  // for inet_pton() to convert IP address from text to binary form
 
 
 #define SERVER_ADDRESS "127.0.0.1"

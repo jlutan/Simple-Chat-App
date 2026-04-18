@@ -6,7 +6,7 @@
 int main() {
     const char* serverIp = SERVER_ADDRESS; // Server IP address (localhost)
     unsigned short serverPort = SERVER_PORT; // Server port number
-    const char* message = "Hello, Server! This is the Client.";
+    const char* message = "Hello, Server! This is the Client.\0";
 
     std::cout << "Client is running..." << std::endl;
     

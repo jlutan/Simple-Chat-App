@@ -6,7 +6,7 @@
 
 
 int main() {
-    const char* replyMessage = "Hello, Client! This is the Server.";
+    const char* replyMessage = "Hello, Client! This is the Server.\0";
     
     std::cout << "Server is running..." << std::endl;
     // Server initialization
@@ -25,10 +25,10 @@ int main() {
 
 
     ssize_t bytesReceived = socket.recvFrom(clientSession.clientAddress, 
-        reinterpret_cast<uint8_t*>(buffer), sizeof(buffer));
+        reinterpret_cast<uint8_t*>(buffer), MAX_BUFFER_SIZE);
     if (bytesReceived > 0) {
         buffer[bytesReceived] = '\0'; // Null-terminate the received data
-        std::cout << "Received message from client: " << buffer << std::endl;
+        std::cout << "Received message from client: " << clientSession.buffer << std::endl;
         printf("Bytes received: %zd\n", bytesReceived);
     } else {
         std::cerr << "Failed to receive message from client." << std::endl;
