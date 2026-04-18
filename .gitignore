@@ -1,3 +1,4 @@
 .tmp.driveupload/
+.tmp.drivedownload/
 build/
 .vscode/
