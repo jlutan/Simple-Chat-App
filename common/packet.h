@@ -13,8 +13,8 @@ enum class PacketType: uint8_t {
 struct PacketHeader {
     PacketType  type;
     uint8_t     version;
-    uint16_t payloadSize;
-    uint32_t sequenceNumber;
     uint32_t connectionId;
+    uint32_t sequenceNumber;
     uint32_t ackNumber;
+    uint16_t payloadLength;
 };
