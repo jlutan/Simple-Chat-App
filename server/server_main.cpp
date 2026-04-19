@@ -1,45 +1,22 @@
-#include <iostream>
+#include <cstdio>
+#include <cstring>
+
 #include <sys/socket.h>
 
 #include "client_session.h"
-#include "../transport/udp_socket.h"
-
+#include "chat_server.h"
 
 int main() {
-    const char* replyMessage = "Hello, Client! This is the Server.\0";
-    
-    std::cout << "Server is running..." << std::endl;
     // Server initialization
-    ServerSocket socket;
-    if (socket.bind(SERVER_PORT)) {
-        std::cout << "Server is running and bound to port " << SERVER_PORT << "." << std::endl;
-    } else {
-        std::cerr << "Failed to bind server socket to port " << SERVER_PORT << "." << std::endl;
+    ChatServer server;
+    if (!server.start(SERVER_PORT)) {
+        perror("Failed to start the chat server.\n");
         return 1;
     }
+    printf("ChatServer is running and listening on port %d.\n", SERVER_PORT);
 
-
-    // Receive data from client and print it
-    ClientSession clientSession;
-    char* buffer = clientSession.buffer;
-
-
-    ssize_t bytesReceived = socket.recvFrom(clientSession.clientAddress, 
-        reinterpret_cast<uint8_t*>(buffer), MAX_BUFFER_SIZE);
-    if (bytesReceived > 0) {
-        buffer[bytesReceived] = '\0'; // Null-terminate the received data
-        std::cout << "Received message from client: " << clientSession.buffer << std::endl;
-        printf("Bytes received: %zd\n", bytesReceived);
-    } else {
-        std::cerr << "Failed to receive message from client." << std::endl;
-    }
-
-    if (!socket.sendTo(clientSession.clientAddress, reinterpret_cast<const uint8_t*>(replyMessage), 
-    strlen(replyMessage))) { // Send response back to the client
-        std::cerr << "Failed to send response to client." << std::endl;
-    } else {
-        std::cout << "Reply message sent to client." << std::endl;
-    }
+    server.run();   // Start the server's main loop to handle client connections and messages
+    server.stop();  // TODO: run in a separate thread and add signal handling for graceful shutdown
 
     return 0;
 }

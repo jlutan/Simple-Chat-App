@@ -1,1 +1,6 @@
-#define MAX_BUFFER_SIZE 1024
+#ifndef CHAT_CLIENT_H
+#define CHAT_CLIENT_H
+
+
+
+#endif // CHAT_CLIENT_H

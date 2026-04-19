@@ -1,22 +1,23 @@
+#ifndef UDP_SOCKET_H
+#define UDP_SOCKET_H
+
 #include <cstdint>
-#include <cstdio>
-#include <cstring>
+// #include <cstdio>
+// #include <cstring>
 
 // UNIX/Linux system headers for socket programming
 #include <netinet/in.h> // system socket API; For sockaddr_in
 #include <unistd.h>     // for close() system call
 #include <sys/socket.h> // for socket functions (socket(), bind(), sendto(), recvfrom())
-#include <arpa/inet.h>  // for inet_pton() to convert IP address from text to binary form
+#include <arpa/inet.h>  // for inet_pton(), inet_addr(), htons(), ntohs()
 
-
-#define SERVER_ADDRESS "127.0.0.1"
-#define SERVER_PORT 8080
+#include "../common/definitions.h" // For MAX_BUFFER_SIZE, SERVER_ADDRESS, SERVER_PORT
 
 
 class UdpSocket {
 public:
     UdpSocket();
-    UdpSocket(int socket_fd);
+    // UdpSocket(int socket_fd);
     ~UdpSocket();
 
     bool sendTo(const sockaddr_in& destIp, const uint8_t* data, size_t size);
@@ -49,3 +50,5 @@ public:
 private:
     sockaddr_in remote_addr; // structure to hold remote server address information
 };
+
+#endif // UDP_SOCKET_H

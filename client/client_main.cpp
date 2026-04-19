@@ -1,17 +1,16 @@
 #include <iostream>
+#include <cstring>
 
 #include "../transport/udp_socket.h"
 #include "chat_client.h"
+#include "../common/packet.h"
 
 int main() {
-    const char* serverIp = SERVER_ADDRESS; // Server IP address (localhost)
-    unsigned short serverPort = SERVER_PORT; // Server port number
     const char* message = "Hello, Server! This is the Client.\0";
 
     std::cout << "Client is running..." << std::endl;
     
-    // Create socket and bind to any available port
-    ClientSocket socket = ClientSocket(serverIp, serverPort); // Create a client socket instance
+    ClientSocket socket = ClientSocket(SERVER_ADDRESS, SERVER_PORT); // Create a client socket instance
 
     // Send message to the server
     if (socket.sendToRemoteServer(reinterpret_cast<const uint8_t*>(message), strlen(message))) { 
@@ -33,6 +32,10 @@ int main() {
         std::cerr << "Failed to receive response from server." << std::endl;
     }
 
+    // TODO: Begin Handshake request to the server
+    Packet handshakePacket;
+    handshakePacket.header.type = PacketType::CONNECT;
+    handshakePacket.header.payloadLength = 0;
 
     return 0;
 }

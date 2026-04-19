@@ -1,4 +1,9 @@
+#ifndef PACKET_H
+#define PACKET_H
+
 #include <cstdint>
+
+#define MAX_BUFFER_SIZE 1024
 
 enum class PacketType: uint8_t {
     CONNECT = 0,
@@ -18,3 +23,10 @@ struct PacketHeader {
     uint32_t ackNumber;
     uint16_t payloadLength;
 };
+
+struct Packet {
+    PacketHeader header;
+    uint8_t payload[MAX_BUFFER_SIZE]; // Maximum payload size of 1024 bytes
+};
+
+#endif // PACKET_H

@@ -4,25 +4,25 @@ UdpSocket::UdpSocket() {
     // Create a UDP socket using IPv4 protocol
     socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (socket_fd < 0) {
-        perror("UdpSocket constructor - socket creation failed\n");
+        // perror("UdpSocket constructor - socket creation failed\n");
         UdpSocket::~UdpSocket(); // Call destructor to clean up if socket creation fails
     }
 }
 
 // Constructor that accepts an existing socket file descriptor
-UdpSocket::UdpSocket(int socket_fd) {
-    if (socket_fd < 0) {
-        perror("UdpSocket constructor - invalid socket file descriptor\n");
-        this->socket_fd = -1; // Set to -1 to indicate an invalid socket
-        UdpSocket::~UdpSocket();
-    } else {
-        this->socket_fd = socket_fd;
-    }
-}
+// UdpSocket::UdpSocket(int socket_fd) {
+//     if (socket_fd < 0) {
+//         perror("UdpSocket constructor - invalid socket file descriptor\n");
+//         this->socket_fd = -1; // Set to -1 to indicate an invalid socket
+//         UdpSocket::~UdpSocket();
+//     } else {
+//         this->socket_fd = socket_fd;
+//     }
+// }
 
 UdpSocket::~UdpSocket() {
     if (socket_fd >= 0) {
-        printf("Closing UDP socket with file descriptor %d\n", socket_fd);
+        // printf("Closing UDP socket with file descriptor %d\n", socket_fd);
         close(socket_fd); // close the socket when the object is destroyed
     }
 }
@@ -71,7 +71,6 @@ bool ServerSocket::bind(unsigned short port) {
     // socket creation and binding to the specified port
     // create DGRAM (UDP) socket using IPv4 (AF_INET) protocol
     if (socket_fd < 0) {
-        perror("UdpSocket::bind - socket creation failed");
         return false;
     }
     

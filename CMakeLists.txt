@@ -10,4 +10,5 @@ add_executable(client_test
 
 add_executable(server_test 
     transport/udp_socket.cpp
+    server/chat_server.cpp
     server/server_main.cpp)
