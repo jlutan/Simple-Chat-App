@@ -3,7 +3,11 @@
 
 #include "chat_server.h"
 
-
+/**
+ * Starts the chat server and binds it to the specified port.
+ * @param port The port number to bind the server socket to.
+ * @return true if the server starts successfully, false otherwise.
+ */
 bool ChatServer::start(unsigned short port) {
     // Bind the server socket to the specified port
     if (serverSocket.bind(port)) {
@@ -13,6 +17,9 @@ bool ChatServer::start(unsigned short port) {
     }
 }
 
+/**
+ * Begins server main loop listening for incoming client connections.
+ */
 void ChatServer::run() {
     running_ = true;
     
@@ -32,6 +39,10 @@ void ChatServer::stop() {
     close(serverSocket.getSocketFd());
 }
 
+/**
+ * Blocks and waits for an incoming message from a client, receives the message, and updates the client session information.
+ * The received message is stored in the server's buffer.
+ */
 void ChatServer::handleIncomingPacket(ClientSession& clientSession) {  
     ssize_t bytesReceived = serverSocket.recvFrom(clientSession.addr, 
         reinterpret_cast<uint8_t*>(buffer), MAX_BUFFER_SIZE);
