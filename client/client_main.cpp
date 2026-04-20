@@ -17,7 +17,7 @@ int main() {
     std::cout << "Client is running..." << std::endl;
 
     // Send broadcast message to the server
-    if (client.sendBroadcast(message)) { 
+    if (client.sendBroadcast(message)) {
         std::cout << "Broadcast message sent to server." << std::endl;
         printf("Bytes sent: %zu\n", strlen(message));
     } else {
@@ -34,10 +34,11 @@ int main() {
         std::cerr << "Failed to receive response from server." << std::endl;
     }
 
-    // TODO: Begin Handshake request to the server
-    Packet handshakePacket;
-    handshakePacket.header.type = PacketType::CONNECT;
-    handshakePacket.header.payloadLength = 0;
-
     return 0;
+}
+
+void sendHandshakeRequest(ChatClient& client) {
+    
+
+    
 }

@@ -9,7 +9,7 @@
 int main() {
     // Server initialization
     ChatServer server;
-    if (!server.start(SERVER_PORT)) {
+    if (!server.start(SERVER_ADDRESS, SERVER_PORT)) {
         perror("Failed to start the chat server.\n");
         return 1;
     }

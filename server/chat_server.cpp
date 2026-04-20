@@ -8,9 +8,9 @@
  * @param port The port number to bind the server socket to.
  * @return true if the server starts successfully, false otherwise.
  */
-bool ChatServer::start(unsigned short port) {
+bool ChatServer::start(const char* serverIp, const unsigned short port) {
     // Bind the server socket to the specified port
-    if (serverSocket.bind(port)) {
+    if (serverSocket_.bind(serverIp, port)) {
         return true;
     } else {
         return false;
@@ -36,7 +36,7 @@ void ChatServer::run() {
 
 void ChatServer::stop() {
     running_ = false;
-    close(serverSocket.getSocketFd());
+    close(serverSocket_.getSocketFd());
 }
 
 /**
@@ -44,13 +44,13 @@ void ChatServer::stop() {
  * The received message is stored in the server's buffer.
  */
 void ChatServer::handleIncomingPacket(ClientSession& clientSession) {  
-    ssize_t bytesReceived = serverSocket.recvFrom(clientSession.addr, 
-        reinterpret_cast<uint8_t*>(buffer), MAX_BUFFER_SIZE);
+    ssize_t bytesReceived = serverSocket_.recvFrom(clientSession.addr, 
+        reinterpret_cast<uint8_t*>(buffer_), MAX_BUFFER_SIZE);
 
     if (bytesReceived > 0) {
-        buffer[bytesReceived] = '\0'; // Null-terminate the received data
+        buffer_[bytesReceived] = '\0'; // Null-terminate the received data
         printf("Received message from client %s:%d: %s\n", 
-            inet_ntoa(clientSession.addr.sin_addr), ntohs(clientSession.addr.sin_port), buffer);
+            inet_ntoa(clientSession.addr.sin_addr), ntohs(clientSession.addr.sin_port), buffer_);
         printf("Bytes received: %zd\n", bytesReceived);
     } else {
         perror("Failed to receive message from client.\n");
@@ -58,7 +58,7 @@ void ChatServer::handleIncomingPacket(ClientSession& clientSession) {
 }
 
 void ChatServer::sendResponseToClient(const ClientSession& clientSession, const char* response) {
-    if (!serverSocket.sendTo(clientSession.addr, 
+    if (!serverSocket_.sendTo(clientSession.addr, 
         reinterpret_cast<const uint8_t*>(response), strlen(response))) { 
         perror("Error sending response to client.\n");
     } else {
@@ -67,7 +67,7 @@ void ChatServer::sendResponseToClient(const ClientSession& clientSession, const 
 }
 
 void ChatServer::broadcastMessage(const char* message, const ClientSession& senderSession) {
-    for (const auto& sessionPair : clientSessions) {
+    for (const auto& sessionPair : clientSessions_) {
         const ClientSession& clientSession = sessionPair.second;
         if (clientSession.connectionId != senderSession.connectionId) { // Don't send to the sender
             sendResponseToClient(clientSession, message);

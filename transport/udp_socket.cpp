@@ -9,17 +9,6 @@ UdpSocket::UdpSocket() {
     }
 }
 
-// Constructor that accepts an existing socket file descriptor
-// UdpSocket::UdpSocket(int socket_fd) {
-//     if (socket_fd < 0) {
-//         perror("UdpSocket constructor - invalid socket file descriptor\n");
-//         this->socket_fd = -1; // Set to -1 to indicate an invalid socket
-//         UdpSocket::~UdpSocket();
-//     } else {
-//         this->socket_fd = socket_fd;
-//     }
-// }
-
 UdpSocket::~UdpSocket() {
     if (socket_fd >= 0) {
         // printf("Closing UDP socket with file descriptor %d\n", socket_fd);
@@ -67,7 +56,7 @@ ssize_t UdpSocket::recvFrom(sockaddr_in& senderIp, uint8_t* buffer, size_t buffe
  * Accepts messages from local host 127.0.0.1
  * Returns true if the socket was bound successfully, false otherwise.
  */
-bool ServerSocket::bind(unsigned short port) {
+bool ServerSocket::bind(const char* serverIp, unsigned short port) {
     // socket creation and binding to the specified port
     // create DGRAM (UDP) socket using IPv4 (AF_INET) protocol
     if (socket_fd < 0) {
@@ -75,7 +64,7 @@ bool ServerSocket::bind(unsigned short port) {
     }
     
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
+    server_addr.sin_addr.s_addr = inet_addr(serverIp);  
     server_addr.sin_port = htons(port); // convert port number to network byte order
     
     if (::bind(socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
@@ -102,6 +91,10 @@ bool ClientSocket::setRemoteServer(const char* serverIp, unsigned short serverPo
     return true;
 }
 
+/**
+ * Sends data to the remote server.
+ * Returns true if the data was sent successfully, false otherwise.
+ */
 bool ClientSocket::sendToRemoteServer(const uint8_t* data, size_t size) {
     return sendTo(remote_addr, data, size);
 }

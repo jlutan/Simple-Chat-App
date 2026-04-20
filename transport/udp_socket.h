@@ -31,7 +31,7 @@ class ServerSocket : public UdpSocket {
 public:
     ServerSocket(): UdpSocket() {}
     
-    bool bind(unsigned short port);
+    bool bind(const char* serverIp, unsigned short port);
     sockaddr_in getServerAddress() const { return server_addr; } 
 private:
     sockaddr_in server_addr; // structure to hold server address information
