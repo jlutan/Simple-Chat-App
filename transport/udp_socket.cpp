@@ -9,16 +9,6 @@ UdpSocket::UdpSocket() {
     }
 }
 
-// Constructor that accepts an existing socket file descriptor
-// UdpSocket::UdpSocket(int socket_fd) {
-//     if (socket_fd < 0) {
-//         perror("UdpSocket constructor - invalid socket file descriptor\n");
-//         this->socket_fd = -1; // Set to -1 to indicate an invalid socket
-//         UdpSocket::~UdpSocket();
-//     } else {
-//         this->socket_fd = socket_fd;
-//     }
-// }
 
 UdpSocket::~UdpSocket() {
     if (socket_fd >= 0) {
@@ -64,7 +54,6 @@ ssize_t UdpSocket::recvFrom(sockaddr_in& senderIp, uint8_t* buffer, size_t buffe
 
 /**
  * Binds the UDP socket to the specified port using IPv4 protocol.
- * Accepts messages from local host 127.0.0.1
  * Returns true if the socket was bound successfully, false otherwise.
  */
 bool ServerSocket::bind(unsigned short port) {
@@ -73,7 +62,7 @@ bool ServerSocket::bind(unsigned short port) {
     if (socket_fd < 0) {
         return false;
     }
-    
+
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(SERVER_ADDRESS);
     server_addr.sin_port = htons(port); // convert port number to network byte order

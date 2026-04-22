@@ -2,8 +2,6 @@
 #define UDP_SOCKET_H
 
 #include <cstdint>
-// #include <cstdio>
-// #include <cstring>
 
 // UNIX/Linux system headers for socket programming
 #include <netinet/in.h> // system socket API; For sockaddr_in
@@ -12,6 +10,10 @@
 #include <arpa/inet.h>  // for inet_pton(), inet_addr(), htons(), ntohs()
 
 #include "../common/definitions.h" // For MAX_BUFFER_SIZE, SERVER_ADDRESS, SERVER_PORT
+
+#define SERVER_ADDRESS "192.168.122.1"
+#define SERVER_PORT 8080
+
 
 
 class UdpSocket {
