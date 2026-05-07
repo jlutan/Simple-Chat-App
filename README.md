@@ -3,5 +3,5 @@
 ## To Build
 ```bash
 cd build/
-cmake -G Ninja ..
-ninja```
+cmake ..
+make```
