@@ -30,9 +30,22 @@ void ChatServer::run() {
         ClientSession clientSession;
         // blocking call to receive incoming messages from clients
         handleIncomingPacket(clientSession);
+        // Update client session information
+        std::string clientKey = inet_ntoa(clientSession.addr.sin_addr) + std::to_string(ntohs(clientSession.addr.sin_port));
+        if (clientSessions.find(clientKey) == clientSessions.end()) {
+            clientSession.connectionId = clientSessions.size() + 1; // Assign a unique connection ID
+            clientSession.connected = true;
+            clientSession.lastActiveTime = std::chrono::steady_clock::now();
+            clientSessions[clientKey] = clientSession; // Store the client session in the map
+            printf("New client connected: %s:%d (Connection ID: %u)\n", 
+                inet_ntoa(clientSession.addr.sin_addr), ntohs(clientSession.addr.sin_port), clientSession.connectionId);
+        } else {
+            // Update existing client session's last active time
+            clientSessions[clientKey].lastActiveTime = std::chrono::steady_clock::now();
+        }
+
         // Send response back to the client
         sendResponseToClient(clientSession, static_cast<const char*>(CONNECT_MESSAGE)); 
-        
     }
 }
 

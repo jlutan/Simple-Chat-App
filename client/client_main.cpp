@@ -16,22 +16,31 @@ int main() {
 
     std::cout << "Client is running..." << std::endl;
 
-    // Send broadcast message to the server
-    if (client.sendBroadcast(message)) { 
-        std::cout << "Broadcast message sent to server." << std::endl;
-        printf("Bytes sent: %zu\n", strlen(message));
-    } else {
-        std::cerr << "Failed to send broadcast message to server." << std::endl;
-    }
+    while (true) {
+        std::cout << "Enter a message to send to the server (or 'exit' to quit): ";
+        std::string userInput;
+        std::getline(std::cin, userInput);
+        if (userInput == "exit") {
+            break;
+        }
 
-    // Receive response from the server
-    char responseBuffer[MAX_BUFFER_SIZE];
-    ssize_t bytesReceived = client.receiveMessage(
-        responseBuffer, sizeof(responseBuffer)); // Receive response from the server
-    if (bytesReceived > 0) {
-        std::cout << "Received response from server: " << responseBuffer << std::endl;
-    } else {
-        std::cerr << "Failed to receive response from server." << std::endl;
+        // Send the user's input as a broadcast message to the server
+        if (client.sendBroadcast(userInput.c_str())) { 
+            std::cout << "Broadcast message sent to server." << std::endl;
+            printf("Bytes sent: %zu\n", userInput.length());
+        } else {
+            std::cerr << "Failed to send broadcast message to server." << std::endl;
+        }
+
+        // Receive response from the server
+        char responseBuffer[MAX_BUFFER_SIZE];
+        ssize_t bytesReceived = client.receiveMessage(
+            responseBuffer, sizeof(responseBuffer)); // Receive response from the server
+        if (bytesReceived > 0) {
+            std::cout << "Received response from server: " << responseBuffer << std::endl;
+        } else {
+            std::cerr << "Failed to receive response from server." << std::endl;
+        }
     }
 
     // TODO: Begin Handshake request to the server
