@@ -1,5 +1,8 @@
 // #include <iostream>
 #include <cstdio>
+#include <crypt.h>
+#include <random>
+#include <string>
 
 #include "chat_server.h"
 #include "client_session.h"
@@ -88,4 +91,125 @@ void ChatServer::broadcastMessage(const char* message, const ClientSession& send
             sendResponseToClient(clientSession, message);
         }
     }
+}
+
+/**
+ * Generates a random salt for bcrypt hashing.
+ * Bcrypt salt format: $2b$<cost>$<22-character-salt>
+ * @return A bcrypt-compatible salt string.
+ */
+std::string ChatServer::generateSalt() {
+    const char* bcrypt_chars = "./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 63);
+    
+    std::string salt;
+    salt += '$';
+    salt += '2';      // bcrypt version
+    salt += 'b';
+    salt += '$';
+    salt += '1';      // cost factor: 10
+    salt += '0';
+    salt += '$';
+    
+    for (int i = 0; i < 22; ++i) {
+        salt += bcrypt_chars[dis(gen)];
+    }
+    
+    return salt;
+}
+
+/**
+ * Hashes a password using bcrypt algorithm.
+ * @param password The plaintext password to hash.
+ * @param salt The salt to use for hashing. If empty, a new salt is generated.
+ * @return A bcrypt hash string.
+ */
+std::string ChatServer::hashPassword(const std::string& password, const std::string& salt) {
+    std::string actualSalt = salt.empty() ? generateSalt() : salt;
+    
+    struct crypt_data data;
+    data.initialized = 0;
+    
+    char* result = crypt_r(password.c_str(), actualSalt.c_str(), &data);
+    if (result == nullptr) {
+        printf("Error: bcrypt hashing failed\n");
+        return "";
+    }
+    
+    return std::string(result);
+}
+
+/**
+ * Verifies a plaintext password against a stored bcrypt hash.
+ * @param password The plaintext password to verify.
+ * @param hashedPassword The stored bcrypt hash.
+ * @return true if the password matches, false otherwise.
+ */
+bool ChatServer::verifyPassword(const std::string& password, const std::string& hashedPassword) {
+    struct crypt_data data;
+    data.initialized = 0;
+    
+    char* result = crypt_r(password.c_str(), hashedPassword.c_str(), &data);
+    if (result == nullptr) {
+        return false;
+    }
+    
+    return std::string(result) == hashedPassword;
+}
+
+/**
+ * Registers a new user with username and password.
+ * @param username The username for the new account.
+ * @param password The plaintext password for the new account.
+ * @return true if registration is successful, false if username already exists.
+ */
+bool ChatServer::registerUser(const std::string& username, const std::string& password) {
+    if (userCredentials.find(username) != userCredentials.end()) {
+        printf("Registration failed: Username '%s' already exists.\n", username.c_str());
+        return false;
+    }
+    
+    if (username.empty() || password.empty()) {
+        printf("Registration failed: Username and password cannot be empty.\n");
+        return false;
+    }
+    
+    // Hash the password and store it
+    std::string hashedPassword = hashPassword(password);
+    userCredentials[username] = hashedPassword;
+    printf("User '%s' registered successfully.\n", username.c_str());
+    return true;
+}
+
+/**
+ * Authenticates a user by verifying username and password.
+ * @param username The username to authenticate.
+ * @param password The plaintext password to verify.
+ * @return true if authentication is successful, false otherwise.
+ */
+bool ChatServer::loginUser(const std::string& username, const std::string& password) {
+    auto it = userCredentials.find(username);
+    if (it == userCredentials.end()) {
+        printf("Login failed: Username '%s' not found.\n", username.c_str());
+        return false;
+    }
+    
+    if (!verifyPassword(password, it->second)) {
+        printf("Login failed: Invalid password for user '%s'.\n", username.c_str());
+        return false;
+    }
+    
+    printf("User '%s' logged in successfully.\n", username.c_str());
+    return true;
+}
+
+/**
+ * Checks if a user exists in the credentials database.
+ * @param username The username to check.
+ * @return true if the user exists, false otherwise.
+ */
+bool ChatServer::userExists(const std::string& username) const {
+    return userCredentials.find(username) != userCredentials.end();
 }

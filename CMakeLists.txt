@@ -13,3 +13,6 @@ add_executable(server
     transport/udp_socket.cpp
     server/chat_server.cpp
     server/server_main.cpp)
+
+# Link server with libcrypt for bcrypt support
+target_link_libraries(server crypt)
