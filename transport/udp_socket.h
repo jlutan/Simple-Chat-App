@@ -11,7 +11,7 @@
 
 #include "../common/definitions.h" // For MAX_BUFFER_SIZE, SERVER_ADDRESS, SERVER_PORT
 
-#define SERVER_ADDRESS "192.168.122.1"
+#define SERVER_ADDRESS "127.0.0.1"
 #define SERVER_PORT 8080
 
 

@@ -3,7 +3,6 @@
 
 #include <sys/socket.h>
 
-#include "client_session.h"
 #include "chat_server.h"
 
 int main() {

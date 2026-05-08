@@ -2,6 +2,8 @@
 #include <cstdio>
 
 #include "chat_server.h"
+#include "client_session.h"
+
 
 /**
  * Starts the chat server and binds it to the specified port.
